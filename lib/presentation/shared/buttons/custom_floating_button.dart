@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/constants/mapping_colors.dart';
+
 class CustomFloatingButton extends StatelessWidget {
   final void Function() onPressed;
   final IconData iconData;
@@ -14,7 +16,7 @@ class CustomFloatingButton extends StatelessWidget {
       width: 60,
       child: FloatingActionButton(
         elevation: 3,
-        backgroundColor: Theme.of(context).primaryColor,
+        backgroundColor: ColorsConstants.primary100,
         shape: ContinuousRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),

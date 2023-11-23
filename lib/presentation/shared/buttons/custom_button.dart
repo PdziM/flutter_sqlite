@@ -38,7 +38,7 @@ class CustomButton extends StatelessWidget {
               ? Theme.of(context).brightness == Brightness.light
                   ? ColorsConstants.bg300
                   : ColorsConstants.text200
-              : color ?? ColorsConstants.accent100,
+              : color ?? ColorsConstants.primary100,
         ),
         child: Material(
           color: Colors.transparent,

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/constants/mapping_colors.dart';
+
 class NoteCard extends StatelessWidget {
   final String title;
   final String body;
@@ -13,7 +15,7 @@ class NoteCard extends StatelessWidget {
     return Card(
       elevation: 5,
       clipBehavior: Clip.antiAlias,
-      color: Theme.of(context).primaryColor,
+      color: ColorsConstants.primary100,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 10),

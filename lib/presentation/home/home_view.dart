@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:sql_app/presentation/shared/app_bar/custom_app_bar.dart';
 
 import '../shared/buttons/custom_floating_button.dart';
+import '../shared/label/custom_title.dart';
 import 'components/note_card.dart';
 import 'home_state.dart';
 
@@ -23,9 +24,11 @@ class HomeView extends StatelessWidget {
             ),
             body: const SingleChildScrollView(
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16),
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                 child: Column(
                   children: [
+                    CustomTitle(title: 'What did you think?'),
+                    SizedBox(height: 8),
                     NoteCard(
                       title: 'Lorem',
                       body:

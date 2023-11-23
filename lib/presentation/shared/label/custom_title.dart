@@ -13,7 +13,7 @@ class CustomTitle extends StatelessWidget {
     return AutoSizeText(
       title,
       style: textTheme.displaySmall!.copyWith(
-        fontSize: 24,
+        fontSize: 28,
         fontWeight: FontWeight.bold,
         color: Colors.black54,
       ),

@@ -44,6 +44,8 @@ dependencies:
   google_fonts: ^4.0.4
   flutter_animate: ^4.3.0
   auto_size_text: ^3.0.0
+  sqflite: ^2.3.0
+  uuid: ^3.0.4
   # dio: ^5.3.0
 
 
