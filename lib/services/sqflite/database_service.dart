@@ -84,8 +84,7 @@ class DatabaseService extends DatabaseSqlInterface {
   }
 
   @override
-  Future<Either<CustomException, List<NoteEntity>>> fetch(
-      {required NoteEntity note}) async {
+  Future<Either<CustomException, List<NoteEntity>>> fetch() async {
     try {
       List<NoteEntity> tempList = [];
       var db = await init();
@@ -93,9 +92,12 @@ class DatabaseService extends DatabaseSqlInterface {
       List<Map<String, Object?>> map = await db.query('notes');
       if (map.isNotEmpty) {
         for (var element in map) {
+          print(element);
+
           tempList.add(NoteEntity.fromMap(element));
         }
       }
+
       return Right(tempList);
     } catch (e) {
       return Left(CustomException('Erro ao inserir nota: $e'));

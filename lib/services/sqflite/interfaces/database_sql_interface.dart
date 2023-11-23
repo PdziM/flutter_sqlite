@@ -9,6 +9,5 @@ abstract class DatabaseSqlInterface {
   Future<Either<CustomException, int>> insert({required NoteEntity note});
   Future<Either<CustomException, int>> update({required NoteEntity note});
   Future<Either<CustomException, int>> delete({required NoteEntity note});
-  Future<Either<CustomException, List<NoteEntity>>> fetch(
-      {required NoteEntity note});
+  Future<Either<CustomException, List<NoteEntity>>> fetch();
 }
