@@ -12,35 +12,33 @@ class DatabaseService extends DatabaseSqlInterface {
 
   DatabaseService();
 
+  Database? _database;
+
   @override
-  Future<Either<CustomException, Database>> init() async {
-    try {
-      var databasesPath = await getDatabasesPath();
-      String path = join(databasesPath, _dbName);
+  Future<Database> init() async {
+    if (_database != null) return _database!;
+    var databasesPath = await getDatabasesPath();
+    String path = join(databasesPath, _dbName);
 
-      Database database = await openDatabase(path, version: _version,
-          onCreate: (Database db, int version) async {
-        await db.execute(
-            'CREATE TABLE notes(id TEXT PRIMARY KEY, title TEXT NOT NULL, description TEXT NOT NULL)');
-      });
+    _database = await openDatabase(path, version: _version,
+        onCreate: (Database db, int version) async {
+      await db.execute(
+          'CREATE TABLE notes(id TEXT PRIMARY KEY, title TEXT NOT NULL, description TEXT NOT NULL)');
+    });
 
-      return Right(database);
-    } catch (e) {
-      return Left(CustomException('Erro ao inicializar o banco de dados: $e'));
-    }
+    return _database!;
   }
 
   @override
   Future<Either<CustomException, int>> insert(
       {required NoteEntity note}) async {
     try {
-      var db = await init();
+      print('NOTE ${note.toMap()}');
+      Database db = await init();
 
-      int res = await db.fold((l) => 0, (r) async {
-        return await r.insert('notes', note.toMap(),
-            conflictAlgorithm: ConflictAlgorithm.replace);
-      });
-
+      int res = await db.insert('notes', note.toMap(),
+          conflictAlgorithm: ConflictAlgorithm.replace);
+      print(res);
       return Right(res);
     } catch (e) {
       return Left(CustomException('Erro ao inserir nota: $e'));
@@ -51,14 +49,15 @@ class DatabaseService extends DatabaseSqlInterface {
   Future<Either<CustomException, int>> update(
       {required NoteEntity note}) async {
     try {
-      var db = await init();
+      Database db = await init();
 
-      int res = await db.fold((l) => 0, (r) async {
-        return await r.update('notes', note.toMap(),
-            where: 'id = ?',
-            whereArgs: [note.id],
-            conflictAlgorithm: ConflictAlgorithm.replace);
-      });
+      int res = await db.update(
+        'notes',
+        note.toMap(),
+        where: 'id = ?',
+        whereArgs: [note.id],
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
 
       return Right(res);
     } catch (e) {
@@ -72,9 +71,11 @@ class DatabaseService extends DatabaseSqlInterface {
     try {
       var db = await init();
 
-      int res = await db.fold((l) => 0, (r) async {
-        return await r.delete('notes', where: 'id = ?', whereArgs: [note.id]);
-      });
+      int res = await db.delete(
+        'notes',
+        where: 'id = ?',
+        whereArgs: [note.id],
+      );
 
       return Right(res);
     } catch (e) {
@@ -89,16 +90,12 @@ class DatabaseService extends DatabaseSqlInterface {
       List<NoteEntity> tempList = [];
       var db = await init();
 
-      db.fold((l) => Left(CustomException(l.message)), (r) async {
-        var res = await r.query('notes');
-
-        if (res.isNotEmpty) {
-          for (var item in res) {
-            tempList.add(NoteEntity.fromMap(item));
-          }
+      List<Map<String, Object?>> map = await db.query('notes');
+      if (map.isNotEmpty) {
+        for (var element in map) {
+          tempList.add(NoteEntity.fromMap(element));
         }
-      });
-
+      }
       return Right(tempList);
     } catch (e) {
       return Left(CustomException('Erro ao inserir nota: $e'));
