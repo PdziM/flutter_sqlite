@@ -8,8 +8,9 @@ import '../../../services/sqflite/interfaces/database_sql_interface.dart';
 class NoteCreatorState extends ChangeNotifier {
   final BuildContext context;
   bool isLoading = false;
+  final void Function() onFinish;
 
-  NoteCreatorState(this.context) {
+  NoteCreatorState(this.context, this.onFinish) {
     init();
   }
 
@@ -45,7 +46,7 @@ class NoteCreatorState extends ChangeNotifier {
         note:
             NoteEntity(id: uniqueId, title: title!, description: description!));
     res.fold((l) {}, (r) {
-      print('AQUI $r');
+      onFinish();
       Navigator.of(context).pop();
     });
 

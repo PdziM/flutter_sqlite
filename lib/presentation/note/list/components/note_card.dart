@@ -5,24 +5,23 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/constants/constants.dart';
 import '../../../../core/constants/mapping_colors.dart';
 import '../../../../domain/entities/note_entity.dart';
-import '../../../shared/buttons/custom_icon_button.dart';
 
 class NoteCard extends StatelessWidget {
   final NoteEntity note;
   final bool buttonBar;
   final void Function() onTap;
+  final List<Widget> actions;
 
   const NoteCard(
       {super.key,
       required this.note,
       required this.buttonBar,
-      required this.onTap});
+      required this.onTap,
+      required this.actions});
 
   @override
   Widget build(BuildContext context) {
-    final Size size = MediaQuery.sizeOf(context);
     final textTheme = Theme.of(context).textTheme;
-
     return GestureDetector(
       onTap: onTap,
       child: SizedBox(
@@ -61,18 +60,7 @@ class NoteCard extends StatelessWidget {
                     child: ButtonBar(
                       alignment: MainAxisAlignment.spaceAround,
                       layoutBehavior: ButtonBarLayoutBehavior.constrained,
-                      children: [
-                        CustomIconButton(
-                          iconData: Icons.edit,
-                          iconColor: Colors.white,
-                          onTap: () {},
-                        ),
-                        CustomIconButton(
-                          iconData: Icons.delete,
-                          iconColor: Colors.white,
-                          onTap: () {},
-                        ),
-                      ],
+                      children: actions,
                     ),
                   ).animate(effects: inputAnimation()).fade(
                         duration: const Duration(milliseconds: 80),

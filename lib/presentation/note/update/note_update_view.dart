@@ -11,13 +11,14 @@ import 'note_update_state.dart';
 
 class NoteUpdateView extends StatelessWidget {
   final NoteEntity note;
+  final void Function() onFinish;
 
-  const NoteUpdateView({super.key, required this.note});
+  const NoteUpdateView({super.key, required this.note, required this.onFinish});
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => NoteUpdateState(context),
+      create: (_) => NoteUpdateState(context, note, onFinish),
       child: Consumer<NoteUpdateState>(
         builder: (_, state, __) {
           return Scaffold(
@@ -38,7 +39,6 @@ class NoteUpdateView extends StatelessWidget {
                     const SizedBox(height: 8),
                     CustomTextField(
                       title: 'Title',
-                      hintText: 'Example: My note',
                       onChanged: state.setTitle,
                       controller: state.titleController,
                       textInputAction: TextInputAction.next,
@@ -48,17 +48,16 @@ class NoteUpdateView extends StatelessWidget {
                     const SizedBox(height: 8),
                     CustomTextArea(
                       title: 'Description',
-                      hintText: 'Example: My Description',
                       onChanged: state.setBody,
                       controller: state.descriptionController,
                       keyboardType: TextInputType.text,
                     ),
                     const SizedBox(height: 16),
                     CustomButton(
-                      title: 'Create',
+                      title: 'Edit',
                       showRadius: true,
                       loading: state.isLoading,
-                      onPressed: state.isFormValid ? state.noteCreate : null,
+                      onPressed: state.noteUpdate,
                     ),
                   ],
                 ),

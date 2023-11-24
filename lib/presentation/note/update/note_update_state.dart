@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:uuid/uuid.dart';
 
 import '../../../domain/entities/note_entity.dart';
 import '../../../services/sqflite/interfaces/database_sql_interface.dart';
@@ -8,12 +7,24 @@ import '../../../services/sqflite/interfaces/database_sql_interface.dart';
 class NoteUpdateState extends ChangeNotifier {
   final BuildContext context;
   bool isLoading = false;
+  final NoteEntity note;
+  final void Function() onFinish;
 
-  NoteUpdateState(this.context) {
+  NoteUpdateState(this.context, this.note, this.onFinish) {
     init();
   }
 
-  init() {}
+  init() {
+    updateField();
+  }
+
+  void updateField() {
+    titleController.text = note.title;
+    title = note.title;
+    descriptionController.text = note.description;
+    description = note.description;
+    notifyListeners();
+  }
 
   //! TITLE
   String? title;
@@ -33,19 +44,15 @@ class NoteUpdateState extends ChangeNotifier {
     notifyListeners();
   }
 
-  bool get isFormValid => (isTitleValid && isDescriptionValid && !isLoading);
-  void noteCreate() async {
+  void noteUpdate() async {
     isLoading = true;
     notifyListeners();
 
-    var uuid = const Uuid();
-    String uniqueId = uuid.v4();
-
-    final res = await context.read<DatabaseSqlInterface>().insert(
+    final res = await context.read<DatabaseSqlInterface>().update(
         note:
-            NoteEntity(id: uniqueId, title: title!, description: description!));
+            NoteEntity(id: note.id, title: title!, description: description!));
     res.fold((l) {}, (r) {
-      print('AQUI $r');
+      onFinish();
       Navigator.of(context).pop();
     });
 

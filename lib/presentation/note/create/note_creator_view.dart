@@ -9,12 +9,14 @@ import '../../shared/label/custom_title.dart';
 import 'note_creator_state.dart';
 
 class NoteCreatorView extends StatelessWidget {
-  const NoteCreatorView({super.key});
+  final void Function() onFinish;
+
+  const NoteCreatorView({super.key, required this.onFinish});
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => NoteCreatorState(context),
+      create: (_) => NoteCreatorState(context, onFinish),
       child: Consumer<NoteCreatorState>(
         builder: (_, state, __) {
           return Scaffold(
