@@ -10,6 +10,10 @@ class NoteListState extends ChangeNotifier {
   final BuildContext context;
   bool isLoading = false;
 
+  final String createTableQuery =
+      'CREATE TABLE notes(id TEXT PRIMARY KEY, title TEXT NOT NULL, description TEXT NOT NULL)';
+  final String table = 'notes';
+
   NoteListState(this.context) {
     init();
   }
@@ -24,7 +28,10 @@ class NoteListState extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    final res = await context.read<DatabaseSqlInterface>().fetch();
+    final res = await context.read<DatabaseSqlInterface>().fetch(
+          createTableQuery: createTableQuery,
+          table: table,
+        );
     res.fold((l) {}, (r) {
       notesEntities = r;
       notifyListeners();
@@ -71,7 +78,11 @@ class NoteListState extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    final res = await context.read<DatabaseSqlInterface>().delete(note: note);
+    final res = await context.read<DatabaseSqlInterface>().delete(
+          createTableQuery: createTableQuery,
+          table: table,
+          map: note.toMap(),
+        );
     res.fold((l) {}, (r) {
       notes();
     });

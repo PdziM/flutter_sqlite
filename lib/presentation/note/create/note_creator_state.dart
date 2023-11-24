@@ -10,6 +10,10 @@ class NoteCreatorState extends ChangeNotifier {
   bool isLoading = false;
   final void Function() onFinish;
 
+  final String createTableQuery =
+      'CREATE TABLE notes(id TEXT PRIMARY KEY, title TEXT NOT NULL, description TEXT NOT NULL)';
+  final String table = 'notes';
+
   NoteCreatorState(this.context, this.onFinish) {
     init();
   }
@@ -42,9 +46,16 @@ class NoteCreatorState extends ChangeNotifier {
     var uuid = const Uuid();
     String uniqueId = uuid.v4();
 
+    NoteEntity noteEntity = NoteEntity(
+      id: uniqueId,
+      title: title!,
+      description: description!,
+    );
+
     final res = await context.read<DatabaseSqlInterface>().insert(
-        note:
-            NoteEntity(id: uniqueId, title: title!, description: description!));
+        createTableQuery: createTableQuery,
+        table: table,
+        map: noteEntity.toMap());
     res.fold((l) {}, (r) {
       onFinish();
       Navigator.of(context).pop();

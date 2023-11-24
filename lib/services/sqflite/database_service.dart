@@ -14,28 +14,33 @@ class DatabaseService extends DatabaseSqlInterface {
 
   Database? _database;
 
-  @override
-  Future<Database> init() async {
-    if (_database != null) return _database!;
-    var databasesPath = await getDatabasesPath();
-    String path = join(databasesPath, _dbName);
+  Future<Database> _init({required String createTableQuery}) async {
+    try {
+      if (_database != null) return _database!;
+      var databasesPath = await getDatabasesPath();
+      String path = join(databasesPath, _dbName);
 
-    _database = await openDatabase(path, version: _version,
-        onCreate: (Database db, int version) async {
-      await db.execute(
-          'CREATE TABLE notes(id TEXT PRIMARY KEY, title TEXT NOT NULL, description TEXT NOT NULL)');
-    });
+      _database = await openDatabase(path, version: _version,
+          onCreate: (Database db, int version) async {
+        await db.execute(createTableQuery);
+      });
 
-    return _database!;
+      return _database!;
+    } catch (e) {
+      print('Erro ao inicializar o banco de dados: $e');
+      rethrow;
+    }
   }
 
   @override
   Future<Either<CustomException, int>> insert(
-      {required NoteEntity note}) async {
+      {required String createTableQuery,
+      required String table,
+      required Map<String, dynamic> map}) async {
     try {
-      Database db = await init();
+      Database db = await _init(createTableQuery: createTableQuery);
 
-      int res = await db.insert('notes', note.toMap(),
+      int res = await db.insert(table, map,
           conflictAlgorithm: ConflictAlgorithm.replace);
       return Right(res);
     } catch (e) {
@@ -45,15 +50,17 @@ class DatabaseService extends DatabaseSqlInterface {
 
   @override
   Future<Either<CustomException, int>> update(
-      {required NoteEntity note}) async {
+      {required String createTableQuery,
+      required String table,
+      required Map<String, dynamic> map}) async {
     try {
-      Database db = await init();
+      Database db = await _init(createTableQuery: createTableQuery);
 
       int res = await db.update(
-        'notes',
-        note.toMap(),
+        table,
+        map,
         where: 'id = ?',
-        whereArgs: [note.id],
+        whereArgs: [map['id']],
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
 
@@ -65,14 +72,16 @@ class DatabaseService extends DatabaseSqlInterface {
 
   @override
   Future<Either<CustomException, int>> delete(
-      {required NoteEntity note}) async {
+      {required String createTableQuery,
+      required String table,
+      required Map<String, dynamic> map}) async {
     try {
-      Database db = await init();
+      Database db = await _init(createTableQuery: createTableQuery);
 
       int res = await db.delete(
-        'notes',
+        table,
         where: 'id = ?',
-        whereArgs: [note.id],
+        whereArgs: [map['id']],
       );
 
       return Right(res);
@@ -82,12 +91,13 @@ class DatabaseService extends DatabaseSqlInterface {
   }
 
   @override
-  Future<Either<CustomException, List<NoteEntity>>> fetch() async {
+  Future<Either<CustomException, List<NoteEntity>>> fetch(
+      {required String createTableQuery, required String table}) async {
     try {
       List<NoteEntity> tempList = [];
-      Database db = await init();
+      Database db = await _init(createTableQuery: createTableQuery);
 
-      List<Map<String, Object?>> map = await db.query('notes');
+      List<Map<String, Object?>> map = await db.query(table);
       if (map.isNotEmpty) {
         for (var element in map) {
           tempList.add(NoteEntity.fromMap(element));

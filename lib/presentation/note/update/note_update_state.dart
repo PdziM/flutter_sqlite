@@ -10,6 +10,10 @@ class NoteUpdateState extends ChangeNotifier {
   final NoteEntity note;
   final void Function() onFinish;
 
+  final String createTableQuery =
+      'CREATE TABLE notes(id TEXT PRIMARY KEY, title TEXT NOT NULL, description TEXT NOT NULL)';
+  final String table = 'notes';
+
   NoteUpdateState(this.context, this.note, this.onFinish) {
     init();
   }
@@ -48,9 +52,13 @@ class NoteUpdateState extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
+    NoteEntity noteEntity =
+        NoteEntity(id: note.id, title: title!, description: description!);
+
     final res = await context.read<DatabaseSqlInterface>().update(
-        note:
-            NoteEntity(id: note.id, title: title!, description: description!));
+        createTableQuery: createTableQuery,
+        table: table,
+        map: noteEntity.toMap());
     res.fold((l) {}, (r) {
       onFinish();
       Navigator.of(context).pop();
