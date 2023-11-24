@@ -33,12 +33,10 @@ class DatabaseService extends DatabaseSqlInterface {
   Future<Either<CustomException, int>> insert(
       {required NoteEntity note}) async {
     try {
-      print('NOTE ${note.toMap()}');
       Database db = await init();
 
       int res = await db.insert('notes', note.toMap(),
           conflictAlgorithm: ConflictAlgorithm.replace);
-      print(res);
       return Right(res);
     } catch (e) {
       return Left(CustomException('Erro ao inserir nota: $e'));
@@ -69,7 +67,7 @@ class DatabaseService extends DatabaseSqlInterface {
   Future<Either<CustomException, int>> delete(
       {required NoteEntity note}) async {
     try {
-      var db = await init();
+      Database db = await init();
 
       int res = await db.delete(
         'notes',
@@ -87,17 +85,14 @@ class DatabaseService extends DatabaseSqlInterface {
   Future<Either<CustomException, List<NoteEntity>>> fetch() async {
     try {
       List<NoteEntity> tempList = [];
-      var db = await init();
+      Database db = await init();
 
       List<Map<String, Object?>> map = await db.query('notes');
       if (map.isNotEmpty) {
         for (var element in map) {
-          print(element);
-
           tempList.add(NoteEntity.fromMap(element));
         }
       }
-
       return Right(tempList);
     } catch (e) {
       return Left(CustomException('Erro ao inserir nota: $e'));

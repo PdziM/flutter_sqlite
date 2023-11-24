@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'config/config.dart';
 import 'core/constants/constants.dart';
 import 'main_state.dart';
-import 'presentation/home/home_view.dart';
+import 'presentation/note/list/note_list_view.dart';
 import 'services/sqflite/interfaces/database_sql_interface.dart';
 
 void main() {
@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
           theme: lightThemeData,
           darkTheme: darkThemeData,
           themeMode: state.darkTheme ? ThemeMode.dark : ThemeMode.light,
-          home: const HomeView(),
+          home: const NoteListView(),
         );
       }),
     );

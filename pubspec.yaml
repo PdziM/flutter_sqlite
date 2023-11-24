@@ -46,6 +46,7 @@ dependencies:
   auto_size_text: ^3.0.0
   sqflite: ^2.3.0
   uuid: ^3.0.4
+  card_actions: ^0.0.1
   # dio: ^5.3.0
 
 

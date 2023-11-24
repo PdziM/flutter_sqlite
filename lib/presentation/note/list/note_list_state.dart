@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../services/sqflite/interfaces/database_sql_interface.dart';
-import '../note/create/note_creator_view.dart';
+import '../../../domain/entities/note_entity.dart';
+import '../../../services/sqflite/interfaces/database_sql_interface.dart';
+import '../create/note_creator_view.dart';
 
-class HomeState extends ChangeNotifier {
+class NoteListState extends ChangeNotifier {
   final BuildContext context;
   bool isLoading = false;
 
-  HomeState(this.context) {
+  NoteListState(this.context) {
     init();
   }
 
@@ -16,13 +17,16 @@ class HomeState extends ChangeNotifier {
     notes();
   }
 
+  List<NoteEntity> notesEntities = [];
+
   void notes() async {
     isLoading = true;
     notifyListeners();
 
     final res = await context.read<DatabaseSqlInterface>().fetch();
     res.fold((l) {}, (r) {
-      print('LIST ${r.toList().toString()}');
+      notesEntities = r;
+      notifyListeners();
     });
 
     isLoading = false;
