@@ -1,14 +1,22 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:sql_app/presentation/shared/buttons/custom_icon_button.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
+import '../../../../core/constants/constants.dart';
 import '../../../../core/constants/mapping_colors.dart';
+import '../../../../domain/entities/note_entity.dart';
+import '../../../shared/buttons/custom_icon_button.dart';
 
 class NoteCard extends StatelessWidget {
-  final String title;
-  final String body;
+  final NoteEntity note;
+  final bool buttonBar;
+  final void Function() onTap;
 
-  const NoteCard({super.key, required this.title, required this.body});
+  const NoteCard(
+      {super.key,
+      required this.note,
+      required this.buttonBar,
+      required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +24,7 @@ class NoteCard extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
 
     return GestureDetector(
-      onTap: () {},
+      onTap: onTap,
       child: SizedBox(
         child: Card(
           elevation: 5,
@@ -28,7 +36,7 @@ class NoteCard extends StatelessWidget {
             child: Column(
               children: [
                 AutoSizeText(
-                  title,
+                  note.title,
                   textAlign: TextAlign.center,
                   style: textTheme.titleMedium!
                       .copyWith(fontSize: 21, color: Colors.white),
@@ -41,31 +49,37 @@ class NoteCard extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 11),
                   child: AutoSizeText(
-                    body,
+                    note.description,
                     textAlign: TextAlign.left,
                     style: textTheme.bodyLarge!
                         .copyWith(fontSize: 18, color: Colors.white),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 11),
-                  child: ButtonBar(
-                    alignment: MainAxisAlignment.spaceAround,
-                    layoutBehavior: ButtonBarLayoutBehavior.constrained,
-                    children: [
-                      CustomIconButton(
-                        iconData: Icons.edit,
-                        iconColor: Colors.white,
-                        onTap: () {},
-                      ),
-                      CustomIconButton(
-                        iconData: Icons.delete,
-                        iconColor: Colors.white,
-                        onTap: () {},
-                      ),
-                    ],
-                  ),
-                ),
+                if (buttonBar) ...[
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 11),
+                    child: ButtonBar(
+                      alignment: MainAxisAlignment.spaceAround,
+                      layoutBehavior: ButtonBarLayoutBehavior.constrained,
+                      children: [
+                        CustomIconButton(
+                          iconData: Icons.edit,
+                          iconColor: Colors.white,
+                          onTap: () {},
+                        ),
+                        CustomIconButton(
+                          iconData: Icons.delete,
+                          iconColor: Colors.white,
+                          onTap: () {},
+                        ),
+                      ],
+                    ),
+                  ).animate(effects: inputAnimation()).fade(
+                        duration: const Duration(milliseconds: 80),
+                      )
+                ] else ...[
+                  Container()
+                ],
               ],
             ),
           ),

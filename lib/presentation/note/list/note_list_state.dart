@@ -40,4 +40,16 @@ class NoteListState extends ChangeNotifier {
       ),
     );
   }
+
+  bool buttonBarShow = false;
+  void setButtonBarShow() {
+    buttonBarShow = !buttonBarShow;
+    notifyListeners();
+  }
+
+  void onTap() {
+    print('onTap');
+    buttonBarShow = !buttonBarShow;
+    notifyListeners();
+  }
 }

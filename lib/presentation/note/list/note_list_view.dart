@@ -37,24 +37,12 @@ class NoteListView extends StatelessWidget {
                     ] else if (state.notesEntities.isEmpty) ...[
                       const Center(child: Text('No notes found'))
                     ] else ...[
-                      // Expanded(
-                      //   child: ListView.separated(
-                      //     itemBuilder: (context, index) {
-                      //       final NoteEntity todo = state.notesEntities[index];
-
-                      //       return NoteCard(
-                      //         title: todo.title,
-                      //         body: todo.description,
-                      //       );
-                      //     },
-                      //     separatorBuilder: (context, index) =>
-                      //         const SizedBox(height: 8),
-                      //     itemCount: state.notesEntities.length,
-                      //   ),
-                      // ),
                       ...state.notesEntities
-                          .map((e) =>
-                              NoteCard(title: e.title, body: e.description))
+                          .map((e) => NoteCard(
+                                note: e,
+                                buttonBar: state.buttonBarShow,
+                                onTap: state.onTap,
+                              ))
                           .toList(),
                     ],
                   ],
