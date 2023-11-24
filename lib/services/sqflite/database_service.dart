@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sql_app/domain/entities/note_entity.dart';
@@ -27,7 +28,9 @@ class DatabaseService extends DatabaseSqlInterface {
 
       return _database!;
     } catch (e) {
-      print('Erro ao inicializar o banco de dados: $e');
+      if (kDebugMode) {
+        print('Erro ao inicializar o banco de dados: $e');
+      }
       rethrow;
     }
   }
@@ -52,6 +55,7 @@ class DatabaseService extends DatabaseSqlInterface {
   Future<Either<CustomException, int>> update(
       {required String createTableQuery,
       required String table,
+      String? where = 'id',
       required Map<String, dynamic> map}) async {
     try {
       Database db = await _init(createTableQuery: createTableQuery);
@@ -59,8 +63,8 @@ class DatabaseService extends DatabaseSqlInterface {
       int res = await db.update(
         table,
         map,
-        where: 'id = ?',
-        whereArgs: [map['id']],
+        where: '$where = ?',
+        whereArgs: [map[where]],
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
 
@@ -74,14 +78,15 @@ class DatabaseService extends DatabaseSqlInterface {
   Future<Either<CustomException, int>> delete(
       {required String createTableQuery,
       required String table,
+      String? where = 'id',
       required Map<String, dynamic> map}) async {
     try {
       Database db = await _init(createTableQuery: createTableQuery);
 
       int res = await db.delete(
         table,
-        where: 'id = ?',
-        whereArgs: [map['id']],
+        where: '$where = ?',
+        whereArgs: [map[where]],
       );
 
       return Right(res);
